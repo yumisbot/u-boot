@@ -1,0 +1,44 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR X11)
+/*
+ * GA36-MB V1.2 handheld sold as "R36S" (Allwinner A23, AXP223, 512 MB DDR3).
+ * Minimal board DT for U-Boot: console on UART2 (PB0/PB1), SD card on mmc0.
+ * Pin data from the stock fex: uart_debug_port = 2, mmc0 PF0-PF5, sdc_det PB4.
+ */
+
+/dts-v1/;
+#include "sun8i-a23.dtsi"
+
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	model = "GA36-MB V1.2 (Allwinner A23)";
+	compatible = "allwinner,sun8i-a23";
+
+	aliases {
+		serial0 = &uart2;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+};
+
+&mmc0 {
+	bus-width = <4>;
+	/* stock fex has sdc_det on PB4, polarity unverified: ignore card detect */
+	broken-cd;
+	status = "okay";
+};
+
+&pio {
+	uart2_pb_pins: uart2-pb-pins {
+		pins = "PB0", "PB1";
+		function = "uart2";
+	};
+};
+
+&uart2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart2_pb_pins>;
+	status = "okay";
+};
